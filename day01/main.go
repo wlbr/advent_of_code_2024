@@ -14,13 +14,12 @@ func readInput(input string) (left []int, right []int) {
 	}
 	defer f.Close()
 
-	var l, r int = 0, 0
+	var l, r int
 	var err error
 	for err == nil {
 		if _, err = fmt.Fscanf(f, "%d %d", &l, &r); err == nil {
 			left = append(left, l)
 			right = append(right, r)
-			l, r = 0, 0
 		}
 	}
 
