@@ -23,7 +23,7 @@ This example data contains six reports each containing five levels.
 The engineers are trying to figure out which reports are __safe__. The Red-Nosed reactor safety systems can only tolerate levels that are either gradually increasing or gradually decreasing. So, a report only counts as safe if both of the following are true:
 
   * The levels are either __all increasing__ or __all decreasing__.
-  * Any two adjacent levels differ by __at least one_ and __at most three__.
+  * Any two adjacent levels differ by __at least one__ and __at most three__.
 
 In the example above, the reports can be found safe or unsafe by checking those rules:
 
