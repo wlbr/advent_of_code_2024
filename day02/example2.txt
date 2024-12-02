@@ -1,0 +1,8 @@
+90 91 93 96 93 // Nicht stetig steigend
+88 85 83 82 84 // Nicht stetig fallend
+3 5 7 10 11 11 // Nicht absolut stetig steigend
+88 85 83 82 82 // Nicht absolut stetig fallend
+35 37 39 42 46 // Stetig steigend, aber Delta zu groß
+19 17 14 11 7  // Stetig fallend, aber Delta zu groß
+67 70 72 74 76 // Ok, steigend
+59 56 55 53 51 // OK, fallend
