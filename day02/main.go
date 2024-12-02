@@ -5,49 +5,67 @@ import (
 	"time"
 )
 
-// Minf64 returns the minimum of a slice of float64
-func Min(v []int) int {
-	m := v[0]
-	for _, e := range v {
-		if e < m {
-			m = e
-		}
-	}
-	return m
+const MINDELTA = 1
+const MAXDELTA = 3
+
+func remove(slice []int, s int) []int {
+	tmp := make([]int, len(slice))
+	copy(tmp, slice)
+	return append(tmp[:s], tmp[s+1:]...)
 }
 
-// Maxf64 returns the maximum of a slice of float64
-func Max(v []int) int {
-	m := v[0]
-	for _, e := range v {
-		if e > m {
-			m = e
-		}
-	}
-	return m
-}
-
-func checkStetigSteigend(report []int, mindelta, maxdelta int) bool {
-	for i := 1; i < len(report); i++ {
-		if report[i]-report[i-1] < mindelta || report[i]-report[i-1] > maxdelta {
-			return false
-		}
+func checkRising(a, b int) bool {
+	if b-a < MINDELTA || b-a > MAXDELTA {
+		return false
 	}
 	return true
 }
 
-func checkStetigFallend(report []int, mindelta, maxdelta int) bool {
-	for i := 1; i < len(report); i++ {
-		if report[i-1]-report[i] < mindelta || report[i-1]-report[i] > maxdelta {
-			return false
-		}
+func checkFalling(a, b int) bool {
+	if a-b < MINDELTA || a-b > MAXDELTA {
+		return false
 	}
 	return true
+}
+
+func checkReport(report []int) bool {
+	var isRising, isFalling bool = true, true
+	for i := 1; i < len(report); i++ {
+		r := checkRising(report[i-1], report[i])
+		f := checkFalling(report[i-1], report[i])
+		if !r {
+			isRising = false
+		}
+		if !f {
+			isFalling = false
+		}
+
+	}
+	if isRising || isFalling {
+		return true
+	}
+	return false
+}
+
+func checkFixes(report []int, damping bool) bool {
+	if checkReport(report) {
+		return true
+	}
+	if damping {
+		for j := 0; j < len(report); j++ {
+			fix := remove(report, j)
+			if checkReport(fix) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func task1(reports [][]int) (result int) {
 	for _, report := range reports {
-		if checkStetigSteigend(report, 1, 3) || checkStetigFallend(report, 1, 3) {
+		//if checkStetigSteigend(report, false) || checkStetigFallend(report, false) {
+		if checkFixes(report, false) {
 			result++
 		}
 	}
@@ -56,6 +74,11 @@ func task1(reports [][]int) (result int) {
 }
 
 func task2(reports [][]int) (result int) {
+	for _, report := range reports {
+		if checkFixes(report, true) {
+			result++
+		}
+	}
 	return result
 }
 
@@ -65,10 +88,10 @@ func main() {
 	data := readdata(input)
 	start := time.Now()
 	result := task1(data)
-	fmt.Printf("Task 1 - elapsed Time: %s \t - result \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 1 - elapsed Time: %14s \t - number of safe reports \t = %d \n", time.Since(start), result)
 
 	start = time.Now()
 	result = task2(data)
-	fmt.Printf("Task 2 - elapsed Time: %s \t - result \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 2 - elapsed Time: %14s \t - number of safe reports \t = %d \n", time.Since(start), result)
 
 }

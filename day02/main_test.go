@@ -10,7 +10,7 @@ type testdata struct {
 	expectedtask2 int
 }
 
-var testset []*testdata = []*testdata{{"example1.txt", 2, 230}, {"example2.txt", 2, 230}}
+var testset []*testdata = []*testdata{{"example1.txt", 2, 4}, {"example2.txt", 2, 8}}
 
 func TestTaskOne(t *testing.T) {
 
@@ -23,12 +23,12 @@ func TestTaskOne(t *testing.T) {
 	}
 }
 
-// func TestTaskTwo(t *testing.T) {
-// 	for _, test := range testset {
-// 		input := readdata(test.fname)
-// 		r := task2(input)
-// 		if r != test.expectedtask2 {
-// 			t.Fatalf("Test '%s' failed. Got '%d' -  Wanted: '%d'", test.fname, r, test.expectedtask2)
-// 		}
-// 	}
-// }
+func TestTaskTwo(t *testing.T) {
+	for _, test := range testset {
+		input := readdata(test.fname)
+		r := task2(input)
+		if r != test.expectedtask2 {
+			t.Fatalf("Test '%s' failed. Got '%d' -  Wanted: '%d'", test.fname, r, test.expectedtask2)
+		}
+	}
+}
