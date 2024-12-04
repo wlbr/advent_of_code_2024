@@ -2,162 +2,148 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"time"
 )
 
-func reverse(s string) string {
-	n := 0
-	rune := make([]rune, len(s))
-	for _, r := range s {
-		rune[n] = r
-		n++
-	}
-	rune = rune[0:n]
-	// Reverse
-	for i := 0; i < n/2; i++ {
-		rune[i], rune[n-1-i] = rune[n-1-i], rune[i]
-	}
-	// Convert back to UTF-8.
-	output := string(rune)
-	return output
+const SEARCHWORD1 = "XMAS"
+const SEARCHWORD2 = "MAS"
+
+func outOfBounds(lines []string, x, y int) bool {
+	return !(y >= 0 && y < len(lines) && x >= 0 && x < len(lines[y]))
 }
 
-func flipHorizontally(lines []string) (result []string) {
-	for _, line := range lines {
-		result = append(result, reverse(line))
-	}
-	return result
-}
-
-func flipvertically(lines []string) (result []string) {
-	for i := len(lines) - 1; i >= 0; i-- {
-		result = append(result, lines[i])
-	}
-	return result
-}
-
-func rotate90(lines []string) (result []string) {
-	for i := 0; i < len(lines[0]); i++ {
-		var line string
-		for j := len(lines) - 1; j >= 0; j-- {
-			line += string(lines[j][i])
+func searchRight(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if x+i >= len(lines[y]) || lines[y][x+i] != word[i] {
+			return false
 		}
-		result = append(result, line)
 	}
-	return result
+	return true
 }
 
-func rotate270(lines []string) (result []string) {
-	for i := len(lines[0]) - 1; i >= 0; i-- {
-		var line string
-		for j := 0; j < len(lines); j++ {
-			line += string(lines[j][i])
+func searchLeft(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if x-i < 0 || lines[y][x-i] != word[i] {
+			return false
 		}
-		result = append(result, line)
 	}
-	return result
+	return true
 }
 
-func rotate45(lines []string) (result []string) {
-	for y := 0; y < len(lines); y++ {
-		for x := 0; x < len(lines[y]); x++ {
-			var line string
-			rx := x
-			ry := y
-			for {
-				//fmt.Printf("ii: %d - j: %d  line: '%s' lines[%d]: %s. \n", ii, j, line, ii, lines[ii])
-				if ry >= len(lines) || rx >= len(lines[ry]) {
-					break
-				}
-				line = line + string(lines[ry][rx])
-				rx++
-				ry++
+func searchDown(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if y+i >= len(lines) || lines[y+i][x] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func searchUp(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if y-i < 0 || lines[y-i][x] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func searchDownRight(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+
+		if outOfBounds(lines, x+i, y+i) || y+i >= len(lines) || x+i >= len(lines[y+i]) || lines[y+i][x+i] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func searchDownLeft(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if outOfBounds(lines, x-i, y+i) || y+i >= len(lines) || x-i < 0 || lines[y+i][x-i] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func searchUpRight(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if outOfBounds(lines, x+i, y-i) || y-i < 0 || x+i >= len(lines[y-i]) || lines[y-i][x+i] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func searchUpLeft(lines []string, x, y int, word string) bool {
+	for i := 0; i < len(word); i++ {
+		if outOfBounds(lines, x-i, y-i) || y-i < 0 || x-i < 0 || lines[y-i][x-i] != word[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func task1(lines []string) (result int) {
+	for y, line := range lines {
+		for x := 0; x < len(line); x++ {
+			if searchRight(lines, x, y, SEARCHWORD1) {
+				result++
 			}
-			result = append(result, line)
-		}
-	}
-	return result
-}
-
-func rotate315(lines []string) (result []string) {
-	for y := 0; y < len(lines); y++ {
-		for x := 0; x < len(lines[y]); x++ {
-			var line string
-			rx := x
-			ry := y
-			for {
-				//fmt.Printf("ii: %d - j: %d  line: '%s' lines[%d]: %s. \n", ii, j, line, ii, lines[ii])
-				if ry >= len(lines) || rx < 0 {
-					break
-				}
-				line = line + string(lines[ry][rx])
-				rx--
-				ry++
+			if searchLeft(lines, x, y, SEARCHWORD1) {
+				result++
 			}
-			result = append(result, line)
+			if searchDown(lines, x, y, SEARCHWORD1) {
+				result++
+			}
+			if searchUp(lines, x, y, SEARCHWORD1) {
+				result++
+			}
+			if searchDownRight(lines, x, y, SEARCHWORD1) {
+				result++
+			}
+			if searchDownLeft(lines, x, y, SEARCHWORD1) {
+				result++
+			}
+			if searchUpRight(lines, x, y, SEARCHWORD1) {
+				result++
+			}
+			if searchUpLeft(lines, x, y, SEARCHWORD1) {
+				result++
+			}
 		}
 	}
 	return result
 }
 
-func count(lines []string) (result int) {
-	for _, line := range lines {
-		result += strings.Count(line, "XMAS")
+func checkMAS(lines []string, x, y int) bool {
+	word := SEARCHWORD2
+	dist := len(word) % 2
+	if dist == 0 {
+		fmt.Print("Error - searchword not of uneven length.")
+		return false
 	}
-	return result
+	if (searchDownRight(lines, x-dist, y-dist, word) || searchUpLeft(lines, x+dist, y+dist, word)) &&
+		(searchDownLeft(lines, x+dist, y-dist, word) || searchUpRight(lines, x-dist, y+dist, word)) {
+		return true
+	}
+	return false
 }
 
-func show(lines []string) {
-	for _, line := range lines {
-		fmt.Println(line)
-	}
-}
-
-func compare(left, right []string) {
-	m := max(len(left), len(right))
-	for i := 0; i < m; i++ {
-		if i < len(left) {
-			fmt.Printf("  %s", left[i])
-		} else {
-			fmt.Printf(" \t")
-		}
-		if i < len(right) {
-			fmt.Printf("\t %s  \n", right[i])
+func task2(lines []string) (result int) {
+	for y, line := range lines {
+		for x := 0; x < len(line); x++ {
+			if checkMAS(lines, x, y) {
+				result++
+			}
 		}
 	}
-	fmt.Println()
-}
-
-func task1(cmds []string) (result int) {
-	show(cmds)
-	result = count(cmds)
-
-	compare(cmds, flipHorizontally(cmds))
-	result += count(flipHorizontally(cmds))
-
-	compare(cmds, rotate90(cmds))
-	result += count(rotate90(cmds))
-
-	compare(cmds, rotate270(cmds))
-	result += count(rotate270(cmds))
-
-	compare(cmds, rotate45(cmds))
-	result += count(rotate45(cmds))
-
-	compare(cmds, rotate315(cmds))
-	result += count(rotate315(cmds))
-
 	return result
-}
-
-func task2(cmds []string) (result int) {
-
-	return 12
 }
 
 func main() {
-	input := "example1.txt"
+	input := "input.txt"
 
 	data := readfile(input)
 	start := time.Now()
