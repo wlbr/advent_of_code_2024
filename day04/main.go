@@ -14,7 +14,7 @@ func outOfBounds(lines []string, x, y int) bool {
 
 func searchRight(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if x+i >= len(lines[y]) || lines[y][x+i] != word[i] {
+		if outOfBounds(lines, x+i, y) || lines[y][x+i] != word[i] {
 			return false
 		}
 	}
@@ -23,7 +23,7 @@ func searchRight(lines []string, x, y int, word string) bool {
 
 func searchLeft(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if x-i < 0 || lines[y][x-i] != word[i] {
+		if outOfBounds(lines, x-i, y) || lines[y][x-i] != word[i] {
 			return false
 		}
 	}
@@ -32,7 +32,7 @@ func searchLeft(lines []string, x, y int, word string) bool {
 
 func searchDown(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if y+i >= len(lines) || lines[y+i][x] != word[i] {
+		if outOfBounds(lines, x, y+i) || lines[y+i][x] != word[i] {
 			return false
 		}
 	}
@@ -41,7 +41,7 @@ func searchDown(lines []string, x, y int, word string) bool {
 
 func searchUp(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if y-i < 0 || lines[y-i][x] != word[i] {
+		if outOfBounds(lines, x, y-i) || lines[y-i][x] != word[i] {
 			return false
 		}
 	}
@@ -50,8 +50,7 @@ func searchUp(lines []string, x, y int, word string) bool {
 
 func searchDownRight(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-
-		if outOfBounds(lines, x+i, y+i) || y+i >= len(lines) || x+i >= len(lines[y+i]) || lines[y+i][x+i] != word[i] {
+		if outOfBounds(lines, x+i, y+i) || lines[y+i][x+i] != word[i] {
 			return false
 		}
 	}
@@ -60,7 +59,7 @@ func searchDownRight(lines []string, x, y int, word string) bool {
 
 func searchDownLeft(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if outOfBounds(lines, x-i, y+i) || y+i >= len(lines) || x-i < 0 || lines[y+i][x-i] != word[i] {
+		if outOfBounds(lines, x-i, y+i) || lines[y+i][x-i] != word[i] {
 			return false
 		}
 	}
@@ -69,7 +68,7 @@ func searchDownLeft(lines []string, x, y int, word string) bool {
 
 func searchUpRight(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if outOfBounds(lines, x+i, y-i) || y-i < 0 || x+i >= len(lines[y-i]) || lines[y-i][x+i] != word[i] {
+		if outOfBounds(lines, x+i, y-i) || lines[y-i][x+i] != word[i] {
 			return false
 		}
 	}
@@ -78,7 +77,7 @@ func searchUpRight(lines []string, x, y int, word string) bool {
 
 func searchUpLeft(lines []string, x, y int, word string) bool {
 	for i := 0; i < len(word); i++ {
-		if outOfBounds(lines, x-i, y-i) || y-i < 0 || x-i < 0 || lines[y-i][x-i] != word[i] {
+		if outOfBounds(lines, x-i, y-i) || lines[y-i][x-i] != word[i] {
 			return false
 		}
 	}
@@ -148,10 +147,10 @@ func main() {
 	data := readfile(input)
 	start := time.Now()
 	result := task1(data)
-	fmt.Printf("Task 1 - elapsed Time: %s - result \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 1 - elapsed Time: %12s  \t %5s occurence \t= %d \n", time.Since(start), SEARCHWORD1, result)
 
 	start = time.Now()
 	result = task2(data)
-	fmt.Printf("Task 2 - elapsed Time: %s - result \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 2 - elapsed Time: %12s  \t %5s occurence \t= %d \n", time.Since(start), SEARCHWORD2, result)
 
 }
