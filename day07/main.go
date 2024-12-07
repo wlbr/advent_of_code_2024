@@ -2,24 +2,13 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"time"
 )
 
 type equation struct {
 	result   int64
 	operands []int64
-}
-
-func (e equation) String() string {
-	return fmt.Sprintf("Result: %d - Operands: %v", e.result, e.operands)
-}
-
-func Show(e []equation) {
-	var result string
-	for _, eq := range e {
-		result += eq.String() + "\n"
-	}
-	fmt.Println(result)
 }
 
 func permutate(operators []func(int64, int64) int64, length int) (result [][]func(int64, int64) int64) {
@@ -46,10 +35,8 @@ func mul(a, b int64) int64 {
 }
 
 func concat(a, b int64) int64 {
-	t := fmt.Sprintf("%d%d", a, b)
-	r := int64(0)
-	fmt.Sscanf(t, "%d", &r)
-	return r
+	p := int(math.Floor(math.Log10(float64(b))) + 1)
+	return a*int64(math.Pow10(p)) + b
 }
 
 func task1(binaries []equation) (result int64) {

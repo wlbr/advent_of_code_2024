@@ -13,7 +13,7 @@ func safeAtoi(nums []string) (int64s []int64) {
 	for _, n := range nums {
 		i, err := strconv.Atoi(n)
 		if err != nil {
-			log.Fatalf("Error converting '%v' coords to int64: %s from %v", n, nums)
+			log.Fatalf("Error %s converting '%v' to int64 from %v", err, n, nums)
 		}
 		int64s = append(int64s, int64(i))
 	}
