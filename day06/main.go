@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"strings"
+	"sync"
 	"time"
+
+	"github.com/alitto/pond"
 )
 
 type terrain [][]rune
@@ -106,18 +110,29 @@ func task1(terra terrain) (result int) {
 }
 
 func task2(terra terrain) (result int) {
+	maxproc := runtime.NumCPU()
+	runtime.GOMAXPROCS(maxproc)
+
+	pool := pond.New(maxproc, len(terra))
+	mux := &sync.RWMutex{}
+
 	for y, line := range terra {
 		for x, field := range line {
 			if field == '.' || field == 'x' {
 				ct := copyTerrain(terra)
 				ct[y][x] = 'O'
-				_, loop := walk(copyTerrain(ct))
-				if loop {
-					result++
-				}
+				pool.Submit(func() {
+					_, loop := walk(copyTerrain(ct))
+					if loop {
+						mux.Lock()
+						result++
+						mux.Unlock()
+					}
+				})
 			}
 		}
 	}
+	pool.StopAndWait()
 	return result
 }
 
@@ -127,11 +142,11 @@ func main() {
 	terrain := readdata(input)
 	start := time.Now()
 	result := task1(terrain)
-	fmt.Printf("Task 1 - elapsed Time: %12s   - count of unique positons      \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 1 - elapsed Time: %12s   - count of unique positons                      = %d \n", time.Since(start), result)
 
 	terrain = readdata(input)
 	start = time.Now()
 	result = task2(terrain)
-	fmt.Printf("Task 2 - elapsed Time: %12s   - sum of fixed middle page numbers \t = %d \n", time.Since(start), result)
+	fmt.Printf("Task 2 - elapsed Time: %12s   - count of different positions for obstructions = %d \n", time.Since(start), result)
 
 }
