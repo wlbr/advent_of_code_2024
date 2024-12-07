@@ -11,7 +11,12 @@ type equation struct {
 	operands []int64
 }
 
+var permutationCache map[int][][]func(int64, int64) int64 = make(map[int][][]func(int64, int64) int64)
+
 func permutate(operators []func(int64, int64) int64, length int) (result [][]func(int64, int64) int64) {
+	if p, ok := permutationCache[length]; ok {
+		return p
+	}
 	if length == 1 {
 		for _, op := range operators {
 			result = append(result, []func(int64, int64) int64{op})
@@ -23,6 +28,7 @@ func permutate(operators []func(int64, int64) int64, length int) (result [][]fun
 			}
 		}
 	}
+	permutationCache[length] = result
 	return result
 }
 
@@ -57,6 +63,7 @@ func task1(binaries []equation) (result int64) {
 }
 
 func task2(binaries []equation) (result int64) {
+	permutationCache = make(map[int][][]func(int64, int64) int64)
 	for _, eq := range binaries {
 		tries := permutate([]func(int64, int64) int64{add, mul, concat}, len(eq.operands)-1)
 		for _, t := range tries {
